@@ -61,21 +61,18 @@ public class Agent {
 	 */
 	public String Solve(RavensProblem problem) {
 		System.out.println("Problem: " + problem.getName());
-		// String answer = "1";
-		// String correctAnswer = problem.checkAnswer(answer);
-		// System.out.println("       : "+answer+" > "+correctAnswer);
-		//
-		// problemCount++;
-		// if (answer.equals(correctAnswer)) {
-		// correctAnswerCount++;
-		// }
-		//
-		// System.out.println("["+correctAnswerCount+"/"+problemCount+"]");
+		brain.solveProblem(problem);
 
-		//if (problem.getName().endsWith("02")) {
-			return brain.solveProblem(problem);
-		//}
+		String answer = problem.getGivenAnswer();
+		String correctAnswer = problem.checkAnswer(answer);
+		problemCount++;
+		if (answer.equals(correctAnswer))
+			correctAnswerCount++;
 
-		//return "1";
+		System.out.println("       : " + answer + " > " + correctAnswer);
+
+		System.out.println("[" + correctAnswerCount + "/" + problemCount + "]");
+
+		return "1";
 	}
 }

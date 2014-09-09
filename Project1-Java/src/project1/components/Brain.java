@@ -19,6 +19,7 @@ public class Brain {
 	private HashMap<String, Object> memory = new HashMap<String, Object>();
 	private MethodFactory methodFactory;
 	private GeneratorFactory generatorFactory;
+	private TesterFactory testerFactory;
 
 	public Brain() {
 		init();
@@ -27,6 +28,7 @@ public class Brain {
 	private void init() {
 		this.methodFactory = new MethodFactory(this);
 		this.generatorFactory = new GeneratorFactory(this);
+		this.testerFactory = new TesterFactory(this);
 	}
 
 	public String solveProblem(RavensProblem problem) {
@@ -39,7 +41,7 @@ public class Brain {
 		Answer answer = method.solveProblem(problem);
 		
 		String correctAnswer = problem.checkAnswer(answer.getSolutionChosen());
-		System.out.println("Given answer = "+answer.getSolutionChosen()+"; Correct answer = "+correctAnswer);
+		//System.out.println("Given answer = "+answer.getSolutionChosen()+"; Correct answer = "+correctAnswer);
 		
 		return answer.getSolutionChosen();
 	}
@@ -109,6 +111,11 @@ public class Brain {
 	
 	public GeneratorFactory getGeneratorFactory() {
 		return generatorFactory;
+	}
+
+	
+	public TesterFactory getTesterFactory() {
+		return testerFactory;
 	}
 
 	public void remember(String key, Object value) {

@@ -2,10 +2,6 @@ package project1.components;
 
 public class GenerateBasicTransformation implements Generator {
 
-	public static enum State {
-		equal, notEqual, missing
-	}
-
 	@SuppressWarnings("unused")
 	private Brain brain;
 
@@ -26,8 +22,15 @@ public class GenerateBasicTransformation implements Generator {
 			try {
 				RDFFact factB = docB.find(factA.getSubject(),
 						factA.getPredicate());
-				state = factA.getObject().equals(factB.getObject()) ? State.equal
-						: State.notEqual;
+				state = factA.getObject().equals(factB.getObject()) ? State.same
+						: State.different;
+				if (state == State.different && Helper.isNumeric(factA.getObject())) {
+					if (Helper.toNumber(factA.getObject()) < Helper.toNumber(factB.getObject())) {
+						state = State.increase;
+					} else {
+						state = State.decrease;
+					}
+				}
 			} catch (NotFoundException nfe) {
 				state = State.missing;
 			}

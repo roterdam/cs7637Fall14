@@ -34,7 +34,7 @@ C
 4
 	Z
 		shape:half-arrow
-		angle:0
+		angle:180
 		vertical-flip:no
 5
 	Z
