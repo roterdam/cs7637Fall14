@@ -60,19 +60,26 @@ public class Agent {
 	 * @return your Agent's answer to this problem
 	 */
 	public String Solve(RavensProblem problem) {
-		System.out.println("Problem: " + problem.getName());
-		brain.solveProblem(problem);
+		try {
+			System.out.println("Problem: " + problem.getName());
+			brain.solveProblem(problem);
 
-		String answer = problem.getGivenAnswer();
-		String correctAnswer = problem.checkAnswer(answer);
-		problemCount++;
-		if (answer.equals(correctAnswer))
-			correctAnswerCount++;
+			String answer = problem.getGivenAnswer();
+			String correctAnswer = problem.checkAnswer(answer);
+			problemCount++;
+			if (answer.equals(correctAnswer))
+				correctAnswerCount++;
 
-		System.out.println("       : " + answer + " > " + correctAnswer);
+			System.out.println("       : " + answer + " > " + correctAnswer);
 
-		System.out.println("[" + correctAnswerCount + "/" + problemCount + "]");
+			System.out.println("[" + correctAnswerCount + "/" + problemCount
+					+ "]");
 
-		return "1";
+			return answer;
+		} catch (Exception e) {
+			System.err.println(e.getClass().getName() + ":"
+					+ e.getLocalizedMessage());
+			return "0";
+		}
 	}
 }

@@ -3,12 +3,16 @@ package project1.components;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RDFDocument {
+public class RDFDocument implements Cloneable {
 
 	private List<RDFFact> facts;
 
 	public RDFDocument() {
 		facts = new ArrayList<RDFFact>();
+	}
+	
+	public RDFDocument(List<RDFFact> facts) {
+		this.facts = facts;
 	}
 
 	public List<RDFFact> getFacts() {
@@ -31,14 +35,14 @@ public class RDFDocument {
 		return foundFacts;
 	}
 	
-	public RDFFact find(String subject, String predicate) throws NotFoundException {
+	public RDFFact find(String subject, String predicate) {
 		List<RDFFact> foundFacts = new ArrayList<RDFFact>();
 		for (RDFFact fact : facts) {
 			if (fact.getSubject().equals(subject) && fact.getPredicate().equals(predicate)) {
 				return fact;
 			}
 		}
-		throw new NotFoundException();
+		return null;
 	}
 		
 	public String toString() {
@@ -51,4 +55,15 @@ public class RDFDocument {
 		}
 		return buf.toString();
 	}
+
+	@Override
+	protected Object clone() throws CloneNotSupportedException {
+		List<RDFFact> facts = new ArrayList<RDFFact>();
+		for (RDFFact fact : getFacts()) {
+			facts.add((RDFFact)fact.clone());
+		}
+		return new RDFDocument(facts);
+	}
+	
+	
 }

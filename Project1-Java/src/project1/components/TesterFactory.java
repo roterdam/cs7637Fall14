@@ -19,11 +19,12 @@ public class TesterFactory {
 	public Tester create(Type type) {
 
 		switch (type) {
-		case Basic: return new TesterBasic(brain);
-		default: return null;
+		case Basic:
+			return new TesterBasic(brain);
+		default:
+			return null;
 		}
 
 	}
-	
-	
+
 }

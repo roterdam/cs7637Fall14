@@ -20,11 +20,14 @@ public class GeneratorFactory {
 	public Generator create(Type type) {
 
 		switch (type) {
-		case BasicTransformation: return new GenerateBasicTransformation(brain);
-		default: return null;
+		case BasicTransformation:
+			return new GenerateBasicTransformation(brain);
+		case BasicSolution:
+			return new GenerateBasicSolution(brain);
+		default:
+			return null;
 		}
 
 	}
-	
-	
+
 }

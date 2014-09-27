@@ -21,7 +21,7 @@ package project1.components;
  * @author e8pigke
  *
  */
-public class RDFFact {
+public class RDFFact implements Cloneable {
 
 	private String subject;
 	private String predicate;
@@ -51,4 +51,11 @@ public class RDFFact {
 	public String toString() {
 		return ":"+subject+"  "+":"+predicate+"  "+":"+object;
 	}
+
+	@Override
+	protected Object clone() throws CloneNotSupportedException {
+		return new RDFFact(getSubject(), getPredicate(), getObject());
+	}
+	
+	
 }

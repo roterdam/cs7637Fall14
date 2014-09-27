@@ -1,5 +1,7 @@
 package project1.components;
 
+import java.util.List;
+
 public class Helper {
 
 	public static boolean isNumeric(String str)  
@@ -21,6 +23,14 @@ public class Helper {
 		} catch (NumberFormatException nfe) {
 			return 0;
 		}
+	}
+	
+	public static int average(List<Integer> scores) {
+		int score = 0;
+		for (int value : scores) {
+			score += value;
+		}
+		return score / scores.size();
 	}
 	
 }
