@@ -46,6 +46,14 @@ public class RDFXFact extends RDFFact implements Cloneable {
 		this.delta = delta;
 	}
 
+	public void setObjectA(String objectA) {
+		this.setObject(objectA);
+	}
+	
+	public void setObjectB(String objectB) {
+		this.objectB = objectB;
+	}
+
 	public String toString() {
 		return super.toString() + ":" + objectB + ":" + state + ":" + delta;
 	}

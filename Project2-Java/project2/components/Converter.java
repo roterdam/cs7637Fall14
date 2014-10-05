@@ -12,29 +12,32 @@ import project2.RavensProblem;
 
 public class Converter {
 
+	private List<RDFXFact> facts = new ArrayList<RDFXFact>();
+
 	public static HashMap<String, RDFDocument> convert(RavensProblem problem) {
 		HashMap<String, RDFDocument> rdfProblem = new HashMap<String, RDFDocument>();
 
 		for (String name : problem.getFigures().keySet()) {
 			RavensFigure figure = problem.getFigures().get(name);
 			RDFDocument document = new RDFDocument();
+			document.setName(figure.getName());
 			rdfProblem.put(name, document);
 			for (RavensObject object : figure.getObjects()) {
 				for (RavensAttribute ravensAttribute : object.getAttributes()) {
 					String value = ravensAttribute.getValue();
-					// if (value.contains(",")) {
-					// List<String> values = Arrays.asList(value.split(","));
-					// for (String val : values) {
-					// RDFFact fact = new RDFFact(object.getName(),
-					// ravensAttribute.getName(), val);
-					// document.addFact(fact);
-					// }
-					// } else {
-					RDFFact fact = new RDFFact(object.getName(),
-							ravensAttribute.getName(),
-							ravensAttribute.getValue());
-					document.addFact(fact);
-					// }
+					if (value.contains(",")) {
+						List<String> values = Arrays.asList(value.split(","));
+						for (String val : values) {
+							RDFFact fact = new RDFFact(object.getName(),
+									ravensAttribute.getName(), val);
+							document.addFact(fact);
+						}
+					} else {
+						RDFFact fact = new RDFFact(object.getName(),
+								ravensAttribute.getName(),
+								ravensAttribute.getValue());
+						document.addFact(fact);
+					}
 				}
 			}
 		}
@@ -44,23 +47,37 @@ public class Converter {
 
 	public static HashMap<String, RDFDocument> normalizeSubjects(
 			HashMap<String, RDFDocument> srcProblem) {
-		HashMap<String, RDFDocument> cnvProblem = new HashMap<String, RDFDocument>();
+		// HashMap<String, RDFDocument> cnvProblem = new HashMap<String,
+		// RDFDocument>();
 
 		for (String key : srcProblem.keySet()) {
 			RDFDocument srcDocument = srcProblem.get(key);
-			RDFDocument cnvDocument = new RDFDocument();
 			List<String> subjects = srcDocument.getSubjects();
-			for (RDFFact srcFact : srcDocument.getFacts()) {
-				String cnvSubject = mapSubject(srcFact.getSubject(), subjects);
-				String cnvObject = mapObject(srcFact.getObject(), subjects);
-
-				RDFFact cnvFact = new RDFFact(cnvSubject,
-						srcFact.getPredicate(), cnvObject);
-				cnvDocument.addFact(cnvFact);
+			for (int ndx = 0; ndx < subjects.size(); ndx++) {
+				List<RDFFact> facts = srcDocument.find(subjects.get(ndx));
+				for (RDFFact fact : facts) {
+					fact.setSubject(ndx + "");
+					if (fact.getObject() != null) {
+						fact.setObject(mapObject(fact.getObject(), subjects));
+					}
+				}
 			}
-			cnvProblem.put(key, cnvDocument);
 		}
-		return cnvProblem;
+		return srcProblem;
+
+		// RDFDocument cnvDocument = new RDFDocument();
+		// List<String> subjects = srcDocument.getSubjects();
+		// for (RDFFact srcFact : srcDocument.getFacts()) {
+		// String cnvSubject = mapSubject(srcFact.getSubject(), subjects);
+		// String cnvObject = mapObject(srcFact.getObject(), subjects);
+		//
+		// RDFFact cnvFact = new RDFFact(cnvSubject,
+		// srcFact.getPredicate(), cnvObject);
+		// cnvDocument.addFact(cnvFact);
+		// }
+		// cnvProblem.put(key, cnvDocument);
+		// }
+		// return cnvProblem;
 	}
 
 	private static String mapSubject(String srcSubject, List<String> subjects) {
@@ -73,6 +90,10 @@ public class Converter {
 	}
 
 	private static String mapObject(String srcObject, List<String> subjects) {
+		if (!srcObject.contains(",") && !subjects.contains(srcObject)) {
+			return srcObject;
+		}
+
 		String newObject = null;
 		for (String obj : srcObject.split(",")) {
 			int ndx = subjects.indexOf(obj);

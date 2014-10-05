@@ -5,7 +5,7 @@ public class TesterFactory {
 	private Brain brain;
 
 	public static enum Type {
-		Basic
+		Basic, MeansEnds, SubjectShifter
 	}
 
 	@SuppressWarnings("unused")
@@ -21,6 +21,10 @@ public class TesterFactory {
 		switch (type) {
 		case Basic:
 			return new TesterBasic(brain);
+		case MeansEnds:
+			return new TesterMeansEnds(brain);
+		case SubjectShifter:
+			return new TesterSubjectShifter(brain);
 		default:
 			return null;
 		}

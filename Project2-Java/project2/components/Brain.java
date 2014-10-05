@@ -1,35 +1,47 @@
 package project2.components;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import project2.RavensProblem;
 
 public class Brain {
 
+	public static final String MISSES2X1 = "MISSES2X1";
+	public static final String MISSES2X2 = "MISSES2X2";
 	private HashMap<String, List<Object>> memory = new HashMap<String, List<Object>>();
 	private MethodFactory methodFactory;
 	private GeneratorFactory generatorFactory;
 	private TesterFactory testerFactory;
+	private Date startTime;
+	private Date endTime;
 
 	public Brain() {
 		init();
 	}
 
 	private void init() {
+		startTime = new Date();
 		this.methodFactory = new MethodFactory(this);
 		this.generatorFactory = new GeneratorFactory(this);
 		this.testerFactory = new TesterFactory(this);
 	}
 
 	public String solveProblem(RavensProblem problem) {
+		String answer = null;
 		if (problem.getProblemType().equals("2x1")) {
-			return solve2x1Problem(problem);
+			answer = solve2x1Problem(problem);
 		} else if (problem.getProblemType().equals("2x2")) {
-			return solve2x2Problem(problem);
+			answer = solve2x2Problem(problem);
 		} else {
-			return null;
+			answer = null;
 		}
+		
+		endTime = new Date();
+		System.out.println("Elapsed time (ms): "+getElapsedTime());
+		
+		return answer;
 	}
 
 	public String solve2x1Problem(RavensProblem problem) {
@@ -44,7 +56,9 @@ public class Brain {
 		answer = method.solveProblem(rdfProblem);
 
 		String correctAnswer = problem.checkAnswer(answer.getSolutionChosen());
-		// System.out.println("Given answer = "+answer.getSolutionChosen()+"; Correct answer = "+correctAnswer);
+		if (!answer.getSolutionChosen().equals(correctAnswer)) {
+			learn(MISSES2X1, problem);
+		}
 		return answer.getSolutionChosen();
 	}
 
@@ -52,6 +66,8 @@ public class Brain {
 		HashMap<String, RDFDocument> rdfProblem = null;
 		Answer answer = null;
 
+		//if (!problem.getName().endsWith("19")) return "0";
+		
 		rdfProblem = Converter.convert(problem);
 		rdfProblem = Converter.normalizeSubjects(rdfProblem);
 
@@ -62,8 +78,7 @@ public class Brain {
 
 		String correctAnswer = problem.checkAnswer(answer.getSolutionChosen());
 		if (!answer.getSolutionChosen().equals(correctAnswer)) {
-			System.out
-					.println("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
+			learn(MISSES2X2, problem);
 		}
 		return answer.getSolutionChosen();
 	}
@@ -152,5 +167,15 @@ public class Brain {
 
 	public List<Object> recall(String key) {
 		return memory.get(key);
+	}
+	
+	public Date getStartTime() {
+		return startTime;
+	}
+	public Date getEndTime() {
+		return endTime;
+	}
+	public long getElapsedTime() {
+		return endTime.getTime() - startTime.getTime();
 	}
 }

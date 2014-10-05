@@ -5,6 +5,7 @@ import java.util.List;
 
 public class RDFDocument implements Cloneable {
 
+	private String name;
 	private List<RDFFact> facts = new ArrayList<RDFFact>();
 
 	public RDFDocument() {
@@ -70,10 +71,20 @@ public class RDFDocument implements Cloneable {
 	}
 
 	public RDFFact find(String subject, String predicate) {
-		List<RDFFact> foundFacts = new ArrayList<RDFFact>();
 		for (RDFFact fact : facts) {
 			if (fact.getSubject().equals(subject)
 					&& fact.getPredicate().equals(predicate)) {
+				return fact;
+			}
+		}
+		return null;
+	}
+
+	public RDFFact find(String subject, String predicate, String object) {
+		for (RDFFact fact : facts) {
+			if (fact.getSubject().equals(subject)
+					&& fact.getPredicate().equals(predicate)
+					&& fact.getObject().equals(object)) {
 				return fact;
 			}
 		}
@@ -109,4 +120,14 @@ public class RDFDocument implements Cloneable {
 		}
 		return subjects;
 	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+	
+	
 }

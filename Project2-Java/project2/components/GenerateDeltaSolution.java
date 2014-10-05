@@ -3,7 +3,11 @@ package project2.components;
 import java.util.ArrayList;
 import java.util.List;
 
+import project2.attributes.RPMAttribute;
+
 public class GenerateDeltaSolution implements Generator {
+
+	List<String> exactMatchRequired = RPMAttribute.exactRequired();
 
 	@SuppressWarnings("unused")
 	private Brain brain;
@@ -22,38 +26,45 @@ public class GenerateDeltaSolution implements Generator {
 		solutions.add(new RDFDocument()); // seed solutions
 
 		for (RDFXFact factX : docX.getFacts()) {
-			RDFFact factA = docA.find(factX.getSubject(), factX.getPredicate());
 			RDFFact factB;
-			int valA;
-			int val;
-			List<String> values;
-			List<RDFFact> facts;
-			switch (factX.getState()) {
-			case same:
-				add(solutions, factA);
-				break;
-			case different:
-				factB = new RDFFact(factX.getSubject(), factX.getPredicate(),
-						factX.getObjectB());
-				add(solutions, factB);
-				break;
-			case added:
-				factB = new RDFFact(factX.getSubject(), factX.getPredicate(),
-						factX.getObjectB());
-				add(solutions, factB);
-				break;
-			case delta:
-
-				int angle = Helper.toNumber(factA.getObject())
-						+ factX.getDelta();
-				if (angle >= 360) {
-					angle -= 360;
+			if (exactMatchRequired.contains(factX.getPredicate())) {
+				if (factX.getState() == State.same) {
+					factB = new RDFFact(factX.getSubject(),
+							factX.getPredicate(), factX.getObjectB());
+					add(solutions, factB);
 				}
-				factB = new RDFFact(factX.getSubject(), factX.getPredicate(),
-						angle + "");
-				add(solutions, factB);
+			} else {
 
-				break;
+				RDFFact factA = docA.find(factX.getSubject(),
+						factX.getPredicate());
+
+				switch (factX.getState()) {
+				case same:
+					add(solutions, factA);
+					break;
+				case different:
+					factB = new RDFFact(factX.getSubject(),
+							factX.getPredicate(), factX.getObjectB());
+					add(solutions, factB);
+					break;
+				case added:
+					factB = new RDFFact(factX.getSubject(),
+							factX.getPredicate(), factX.getObjectB());
+					add(solutions, factB);
+					break;
+				case delta:
+
+					int angle = Helper.toNumber(factA.getObject())
+							+ factX.getDelta();
+					if (angle >= 360) {
+						angle -= 360;
+					}
+					factB = new RDFFact(factX.getSubject(),
+							factX.getPredicate(), angle + "");
+					add(solutions, factB);
+
+					break;
+				}
 			}
 		}
 

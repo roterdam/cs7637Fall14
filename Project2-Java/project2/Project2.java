@@ -73,6 +73,8 @@ public class Project2 {
                 results.println("");
             }
             results.close();
+            
+            agent.wrapup();
         } catch(IOException ex) {
             System.out.println("Unable to create results file:");
             System.out.println(ex);

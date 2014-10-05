@@ -17,8 +17,42 @@ public class TesterBasic implements Tester {
 		this.brain = brain;
 	}
 
-	@Override
 	public int score(RDFDocument docA, RDFDocument docB) {
+		// In case no facts to compare
+		if (docA.getFacts().size() == 0) {
+			return docB.getFacts().size() == 0 ? 100 : 0;
+		}
+
+		List<Integer> scores = new ArrayList<Integer>();
+		for (RDFFact factA : docA.getFacts()) {
+			RDFFact factB = docB.find(factA.getSubject(), factA.getPredicate(),
+					factA.getObject());
+			if (factB != null) {
+				scores.add(100);
+			} else {
+				scores.add(0);
+			}
+		}
+
+		for (RDFFact factB : docB.getFacts()) {
+			RDFFact factA = docA.find(factB.getSubject(), factB.getPredicate(),
+					factB.getObject());
+			if (factA != null) {
+				scores.add(100);
+			} else {
+				scores.add(0);
+			}
+		}
+
+		return scores.size() > 0 ? Helper.average(scores) : 0;
+	}
+
+	public int score2(RDFDocument docA, RDFDocument docB) {
+		// In case no facts to compare
+		if (docA.getFacts().size() == 0) {
+			return docB.getFacts().size() == 0 ? 100 : 0;
+		}
+
 		List<Integer> scores = new ArrayList<Integer>();
 		for (RDFFact factA : docA.getFacts()) {
 			RDFFact factB = docB.find(factA.getSubject(), factA.getPredicate());
@@ -47,10 +81,9 @@ public class TesterBasic implements Tester {
 			}
 		}
 
-		return Helper.average(scores);
+		return scores.size() > 0 ? Helper.average(scores) : 0;
 	}
 
-	@Override
 	public int score(RDFDocument docA, RDFXDocument docX, RDFDocument docB) {
 
 		List<Integer> scores = new ArrayList<Integer>();

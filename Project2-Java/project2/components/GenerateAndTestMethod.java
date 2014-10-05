@@ -20,21 +20,23 @@ public class GenerateAndTestMethod implements Method {
 
 	@Override
 	public Answer solveProblem(HashMap<String, RDFDocument> rdfProblem) {
-		GenerateBasicTransformation transformer = (GenerateBasicTransformation)brain.getGeneratorFactory().create(
-				GeneratorFactory.Type.BasicTransformation);
-		Tester tester = brain.getTesterFactory().create(
+		GenerateBasicTransformation transformer = (GenerateBasicTransformation) brain
+				.getGeneratorFactory().create(
+						GeneratorFactory.Type.BasicTransformation);
+		TesterBasic tester = (TesterBasic) brain.getTesterFactory().create(
 				TesterFactory.Type.Basic);
-		RDFXDocument docABX = transformer.generate(rdfProblem.get("A"),rdfProblem.get("B"));
-		//System.out.println("A...\n" + rdfProblem.get("A").toString());
-		//System.out.println("B...\n" + rdfProblem.get("B").toString());
-		//System.out.println("ABX...\n" + docABX.toString());
+		RDFXDocument docABX = transformer.generate(rdfProblem.get("A"),
+				rdfProblem.get("B"));
+		// System.out.println("A...\n" + rdfProblem.get("A").toString());
+		// System.out.println("B...\n" + rdfProblem.get("B").toString());
+		// System.out.println("ABX...\n" + docABX.toString());
 
 		RDFDocument docC = rdfProblem.get("C");
 		List<Answer> answers = new ArrayList<Answer>();
 		for (int cnt = 1; cnt <= 6; cnt++) {
 			RDFDocument docS = rdfProblem.get(cnt + "");
 			int score = tester.score(docC, docABX, docS);
-			//System.out.println("Solution " + cnt + "; score=" + score);
+			// System.out.println("Solution " + cnt + "; score=" + score);
 			answers.add(new Answer(cnt + "", score));
 		}
 
@@ -52,8 +54,9 @@ public class GenerateAndTestMethod implements Method {
 		Memory memory = new Memory();
 		memory.load(rdfProblem.values());
 
-		GenerateBasicSolution generator = (GenerateBasicSolution)brain.getGeneratorFactory().create(
-				GeneratorFactory.Type.BasicSolution);
+		GenerateBasicSolution generator = (GenerateBasicSolution) brain
+				.getGeneratorFactory().create(
+						GeneratorFactory.Type.BasicSolution);
 
 		List<RDFDocument> solutions = generator.generate(docC, docABX, memory);
 
@@ -62,7 +65,7 @@ public class GenerateAndTestMethod implements Method {
 			RDFDocument docS = rdfProblem.get(cnt + "");
 			for (RDFDocument solution : solutions) {
 				int score = tester.score(solution, docS);
-				//System.out.println("Solution " + cnt + "; score=" + score);
+				// System.out.println("Solution " + cnt + "; score=" + score);
 				answers.add(new Answer(cnt + "", score));
 			}
 		}

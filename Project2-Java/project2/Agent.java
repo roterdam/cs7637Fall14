@@ -1,5 +1,7 @@
 package project2;
 
+import java.util.List;
+
 import project2.components.Brain;
 
 /**
@@ -62,21 +64,27 @@ public class Agent {
 	 */
 	public String Solve(RavensProblem problem) {
 		try {
+
 			if (!problem.getProblemType().equals(problemType)) {
 				problemCount = 0;
 				correctAnswerCount = 0;
 				problemType = problem.getProblemType();
 			}
 			System.out.println("Problem: " + problem.getName());
-			brain.solveProblem(problem);
-
-			String answer = problem.getGivenAnswer();
+//			if (!problem.getProblemType().equals("2x2")) {
+//				return 0 + "";
+//			}
+			String answer = brain.solveProblem(problem);
 			String correctAnswer = problem.checkAnswer(answer);
 			problemCount++;
-			if (answer.equals(correctAnswer))
+			String note = "< correct";
+			if (answer.equals(correctAnswer)) {
 				correctAnswerCount++;
+			} else {
+				note = "< MISS";
+			}
 
-			System.out.println("       : " + answer + " > " + correctAnswer);
+			System.out.println("Given answer = "+answer+"; Correct answer = "+correctAnswer+"   "+note);
 
 			System.out.println("[" + correctAnswerCount + "/" + problemCount
 					+ "]");
@@ -86,6 +94,14 @@ public class Agent {
 			System.err.println(e.getClass().getName() + ":"
 					+ e.getLocalizedMessage());
 			return "0";
+		}
+	}
+	
+	public void wrapup() {
+		List<Object> problems = brain.recall(Brain.MISSES2X2);
+		for (Object object : problems) {
+			RavensProblem problem = (RavensProblem)object;
+			System.out.println("Missed: "+problem.getName());
 		}
 	}
 }
